@@ -1,3 +1,8 @@
+
+; Title:  linux/x86 chmod 666 /etc/ shadow 27 bytes
+; Original Author: root@thegibson
+
+
 section .text 
 global _start
 
