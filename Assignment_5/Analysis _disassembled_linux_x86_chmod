@@ -1,0 +1,15 @@
+00000000  99                cdq        // Convert Doubleword to Quadwor  EDX:EAX = sign-extend of EAX   
+00000001  6A0F              push byte +0xf                     //     push the value 15 into the stack 
+00000003  58                pop eax                                //               pop eax register from the stack  
+00000004  52                push edx                  //                   push edx into the stack 
+00000005  E804000000        call 0xe        // call the syscall of the value 0xe which is ‭14 in decimal formate‬ 
+0000000A  666F              outsw                    //  Output word from memory location specified in DS:(E)SI to I/O port specified in DX
+0000000C  6F                outsd                                //  Output doubleword from memory location specified in DS:(E)SI to I/O port specified in DX
+0000000D  005B68            add [ebx+0x68],bl                //  add the value of bl register into the location address of ebx By 0x68 (which is 104 in decimal format) 
+00000010  FF01              inc dword [ecx]                //   add one into the location where the ecx  is stored
+00000012  0000              add [eax],al                //      add the value of al into the register eax address location 
+00000014  59                pop ecx               //                pop ecx from the stack 
+00000015  CD80              int 0x80                //                                   SYSCALL
+00000017  6A01              push byte +0x1        //                 push A byte 1 into the stack , so that later it will be used for termination. 
+00000019  58                pop eax                      //                        pop eax from the stack  
+0000001A  CD80              int 0x80                          //                       SYSCALL  where eax = 1 
