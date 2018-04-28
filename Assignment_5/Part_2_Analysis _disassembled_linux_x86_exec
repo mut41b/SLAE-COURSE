@@ -1,0 +1,24 @@
+No encoder or badchars specified, outputting raw payload
+Payload size: 43 bytes
+
+00000000  6A0B              push byte +0xb                       //  push 0xb (11) onto stack   // Here we can see where the sys call is being processed the Linux read syscall implementation
+00000002  58                pop eax                                         //  pop 0xb into eax
+00000003  99                cdq                // instruction extends the sign bit of EAX into the EDX register.
+00000004  52                push edx             // push edx into the stack 
+00000005  66682D63          push word 0x632d           // push  a WORD of a type (DW) with a size of 2 bytes (Size in bytes)
+00000009  89E7              mov edi,esp               //  which is just moving the value of esp into edi for later use , Note that this can be done in many other ways for say "lea edi, [esp]"
+
+
+0000000B  682F736800        push dword 0x68732f              // push "hs/" into the stack using a word type of DD which have the size of "4 bytes"    Size(in bytes) 
+00000010  682F62696E        push dword 0x6e69622f        // push "nib/" into the stack using a word type of DD which have the size of "4 bytes"    Size(in bytes) 
+00000015  89E3              mov ebx,esp           //  Move the value of esp register 
+
+00000017  52                push edx                // push edx into the stack 
+00000018  E808000000        call 0x25                 //  sys call 0x25 which is the system call number that corresponds to the CreateFile function 
+0000001D  2F                das                 // Decimal adjustment the two-BCD-digit in the AL register
+0000001E  62696E            bound ebp,[ecx+0x6e]                 
+00000021  2F                das            // Decimal adjustment the two-BCD-digit in the AL register
+00000022  7368              jnc 0x8c             // transfer program control into the address 0x8x , note that "jnc" is used if the carry flag is 0. Otherwise, execution continues with the next instruction     
+00000024  005753            add [edi+0x53],dl          // add the content of the "dl" into the location of  [edi+0x53]  
+00000027  89E1              mov ecx,esp             // move the stack pointer into ecx 
+00000029  CD80              int 0x80                   // SYSCALL 
